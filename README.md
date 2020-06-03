@@ -26,3 +26,8 @@ Versão Mobile e Web.
   ``` npm run dev ```
  ##### Executar migrations
  ``` npm run knex:migrate ```
+
+  ##### Executar seed
+ ``` npm run knex:seed ```
+
+
