@@ -31,3 +31,8 @@ Versão Mobile e Web.
  ``` npm run knex:seed ```
 
 
+ #### Regras
+
+  Os itens que podem ser coletados nos pontos já vem cadastrados no sistema e não podem ser cadastrados pelo usuário *
+
+
