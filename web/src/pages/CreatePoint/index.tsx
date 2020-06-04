@@ -1,5 +1,5 @@
-import React,{useEffect,useState, ChangeEvent} from 'react';
-import {Link} from 'react-router-dom';
+import React,{useEffect,useState, ChangeEvent,FormEvent} from 'react';
+import {Link, useHistory} from 'react-router-dom';
 import axios from 'axios';
 import './style.css';
 import logo from '../../assets/logo.svg';
@@ -30,8 +30,14 @@ const CreatePoint = () => {
   const [city, setCity] = useState<string[]>([]);
   const[selectedPosition, setSelectedPosition] = useState<[number,number]>([0,0]);
   const[initialPosition, setinitialPosition] = useState<[number,number]>([0,0]);
+  const [formData, setFormData] = useState({
+    name:'',
+    email:'',
+    whatsapp:'',
+  })
+  const[selectedItems, setSelectedItems] = useState<number[]>([]);
 
-  
+  const history = useHistory();
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(position => {
       const {latitude, longitude} = position.coords;
@@ -84,8 +90,45 @@ const CreatePoint = () => {
       event.latlng.lng
     ])
   }
+  function handleInputChange(event: ChangeEvent<HTMLInputElement>){
+      const{name, value } = event.target
+      setFormData({...formData,[name]: value})
+  }
 
+  function handleSelectItem(id: number){
+    const alreadySelected = selectedItems.findIndex(item => item === id);
 
+    if(alreadySelected >= 0){
+      const filteredItems = selectedItems.filter(item => item !== id);
+      setSelectedItems(filteredItems);
+    }else
+    {
+      setSelectedItems([...selectedItems, id]);
+    }
+   
+  }
+  async function  handleSubmit(event: FormEvent) {
+    event.preventDefault();
+    const {name,email,whatsapp} = formData;
+    const uf = selectedUF;
+    const city = selectedCity;
+    const [latitude,longitude] = selectedPosition;
+    const items = selectedItems;
+
+    const data = {
+      name,
+      email,
+      whatsapp,
+      uf,
+      city,
+      latitude,
+      longitude,
+      items
+    };
+    await api.post('points',data);
+    alert ('Ponto de coleta criado');
+    history.push('/');
+  }
   return (
     <div id="page-create-point">
       <header>
@@ -112,6 +155,7 @@ const CreatePoint = () => {
                type="text"
                name="name"
                id="name"
+               onChange={handleInputChange}
               />
           </div>
 
@@ -122,6 +166,7 @@ const CreatePoint = () => {
                 type="email"
                 name="email"
                 id="email"
+                onChange={handleInputChange}
                 />
             </div>
             <div className="field">
@@ -130,6 +175,7 @@ const CreatePoint = () => {
                type="text"
                name="whatsapp"
                id="whatsapp"
+               onChange={handleInputChange}
               />
           </div>
           </div>
@@ -141,7 +187,7 @@ const CreatePoint = () => {
             <h2>Endereço</h2>
             <span>Selecione o endereço no mapa</span>
           </legend>
-          <Map center={initialPosition }zoom={15} onclick={handleMapClick}>
+          <Map center={initialPosition }zoom={0} onclick={handleMapClick}>
           <TileLayer
             attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -177,7 +223,12 @@ const CreatePoint = () => {
           </legend>
           <ul className="items-grid">
             {items.map(item =>(
-            <li key={item.id}>
+            <li 
+            key={item.id}
+            onClick={(() =>handleSelectItem(item.id))}
+            className = {selectedItems.includes(item.id) ? 'selected' : ''}
+             
+             >
               <img src={item.image_url} alt={item.title}/>
               <span>{item.title}</span>
             </li>))}
@@ -185,7 +236,7 @@ const CreatePoint = () => {
             
           </ul>
         </fieldset>
-        <button type="submit">Cadastrar ponto</button>
+        <button type="submit" onClick={handleSubmit}>Cadastrar ponto</button>
       </form>
   </div>
   )
