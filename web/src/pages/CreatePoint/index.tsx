@@ -32,7 +32,12 @@ const CreatePoint = () => {
   const[initialPosition, setinitialPosition] = useState<[number,number]>([0,0]);
 
   
-
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(position => {
+      const {latitude, longitude} = position.coords;
+      setinitialPosition([latitude,longitude]);
+    })
+  },[])
 
   useEffect(() => {
     api.get('items').then(response => {
@@ -136,7 +141,7 @@ const CreatePoint = () => {
             <h2>Endereço</h2>
             <span>Selecione o endereço no mapa</span>
           </legend>
-          <Map center={[-23.1941379,-46.8543619] }zoom={15} onclick={handleMapClick}>
+          <Map center={initialPosition }zoom={15} onclick={handleMapClick}>
           <TileLayer
             attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
