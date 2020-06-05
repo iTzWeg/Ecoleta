@@ -16,9 +16,9 @@ Versão Mobile e Web.
    
 ### Pastas
   #### server
-  -> Backend Node.js
+  * Backend Node.js
   #### web 
-  -> Webapp React.js
+  * Webapp React.js
 
 #### Scripts
 ###### Deve ser executado no diretorio /server.
@@ -30,6 +30,13 @@ Versão Mobile e Web.
   ##### Executar seed
  ``` npm run knex:seed ```
 
+ ### API´S Externas usadas
+ #### IBGE 
+  * Estados: https://servicodados.ibge.gov.br/api/v1/localidades/estado
+  * Cidades: https://servicodados.ibge.gov.br/api/v1/localidades/estados/SP/municipios
+ ### Biblioteca para o Mapa
+ Leaflet [link](https://leafletjs.com/)
+ 
 
  #### Regras
 
